@@ -1,0 +1,54 @@
+// *******************************************************
+// * Created by Deepthy Vazhelil
+// *
+// * Copyright (c) 2022 Opensource Licence
+// *******************************************************
+
+syntax = "proto3";
+option go_package = "./userProto";
+package userProto;
+
+import "google/protobuf/duration.proto";
+
+message UserRequest {
+    // contain only alphabets, numbers or underscore,
+    // start with a letter, and must be 8 - 30 characters
+    string username = 1;
+    //Password must contain at-least one uppercase letter, 
+    // one lowercase letter, one digit ,one special character
+    // and must be 8-64 characters
+    string password = 2;
+}
+
+message UserToken {
+    // a valid token that is being used for user authentication.
+    string token = 1;
+    google.protobuf.Duration validity = 2;
+}
+
+message UserResponse {
+    enum Status {
+        Invalid = 0;
+        Success = 1;
+    }
+    Status status_code = 1;
+}
+
+message UserDetails {
+    // email address that used for user account.
+    // email can be used for reset the password for the user.
+    string email = 1;
+}
+
+message UserWithDetails {
+    UserRequest request = 1;
+    UserDetails details = 2;
+}
+
+service UserAuth {
+    rpc NewUser(UserWithDetails) returns (UserResponse);
+    rpc DelUser(UserRequest) returns (UserResponse);
+    rpc GetUserToken(UserRequest) returns (UserToken);
+    rpc UpdateUserPassword(UserDetails) returns (UserResponse);
+}
+
