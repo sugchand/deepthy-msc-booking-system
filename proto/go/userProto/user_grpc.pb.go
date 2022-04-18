@@ -2,12 +2,13 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.6.1
-// source: user.proto
+// source: proto/user.proto
 
 package userProto
 
 import (
 	context "context"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,10 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserAuthClient interface {
-	NewUser(ctx context.Context, in *UserWithDetails, opts ...grpc.CallOption) (*UserResponse, error)
-	DelUser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error)
+	NewUser(ctx context.Context, in *UserWithDetails, opts ...grpc.CallOption) (*empty.Empty, error)
+	DelUser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	GetUserToken(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserToken, error)
-	UpdateUserPassword(ctx context.Context, in *UserDetails, opts ...grpc.CallOption) (*UserResponse, error)
+	UpdateUserPassword(ctx context.Context, in *ResetPwdMessage, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type userAuthClient struct {
@@ -36,8 +37,8 @@ func NewUserAuthClient(cc grpc.ClientConnInterface) UserAuthClient {
 	return &userAuthClient{cc}
 }
 
-func (c *userAuthClient) NewUser(ctx context.Context, in *UserWithDetails, opts ...grpc.CallOption) (*UserResponse, error) {
-	out := new(UserResponse)
+func (c *userAuthClient) NewUser(ctx context.Context, in *UserWithDetails, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/userProto.UserAuth/NewUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -45,8 +46,8 @@ func (c *userAuthClient) NewUser(ctx context.Context, in *UserWithDetails, opts 
 	return out, nil
 }
 
-func (c *userAuthClient) DelUser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
-	out := new(UserResponse)
+func (c *userAuthClient) DelUser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/userProto.UserAuth/DelUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -63,8 +64,8 @@ func (c *userAuthClient) GetUserToken(ctx context.Context, in *UserRequest, opts
 	return out, nil
 }
 
-func (c *userAuthClient) UpdateUserPassword(ctx context.Context, in *UserDetails, opts ...grpc.CallOption) (*UserResponse, error) {
-	out := new(UserResponse)
+func (c *userAuthClient) UpdateUserPassword(ctx context.Context, in *ResetPwdMessage, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/userProto.UserAuth/UpdateUserPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -76,10 +77,10 @@ func (c *userAuthClient) UpdateUserPassword(ctx context.Context, in *UserDetails
 // All implementations must embed UnimplementedUserAuthServer
 // for forward compatibility
 type UserAuthServer interface {
-	NewUser(context.Context, *UserWithDetails) (*UserResponse, error)
-	DelUser(context.Context, *UserRequest) (*UserResponse, error)
+	NewUser(context.Context, *UserWithDetails) (*empty.Empty, error)
+	DelUser(context.Context, *UserRequest) (*empty.Empty, error)
 	GetUserToken(context.Context, *UserRequest) (*UserToken, error)
-	UpdateUserPassword(context.Context, *UserDetails) (*UserResponse, error)
+	UpdateUserPassword(context.Context, *ResetPwdMessage) (*empty.Empty, error)
 	mustEmbedUnimplementedUserAuthServer()
 }
 
@@ -87,16 +88,16 @@ type UserAuthServer interface {
 type UnimplementedUserAuthServer struct {
 }
 
-func (UnimplementedUserAuthServer) NewUser(context.Context, *UserWithDetails) (*UserResponse, error) {
+func (UnimplementedUserAuthServer) NewUser(context.Context, *UserWithDetails) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewUser not implemented")
 }
-func (UnimplementedUserAuthServer) DelUser(context.Context, *UserRequest) (*UserResponse, error) {
+func (UnimplementedUserAuthServer) DelUser(context.Context, *UserRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DelUser not implemented")
 }
 func (UnimplementedUserAuthServer) GetUserToken(context.Context, *UserRequest) (*UserToken, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserToken not implemented")
 }
-func (UnimplementedUserAuthServer) UpdateUserPassword(context.Context, *UserDetails) (*UserResponse, error) {
+func (UnimplementedUserAuthServer) UpdateUserPassword(context.Context, *ResetPwdMessage) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserPassword not implemented")
 }
 func (UnimplementedUserAuthServer) mustEmbedUnimplementedUserAuthServer() {}
@@ -167,7 +168,7 @@ func _UserAuth_GetUserToken_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _UserAuth_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserDetails)
+	in := new(ResetPwdMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -179,7 +180,7 @@ func _UserAuth_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/userProto.UserAuth/UpdateUserPassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAuthServer).UpdateUserPassword(ctx, req.(*UserDetails))
+		return srv.(UserAuthServer).UpdateUserPassword(ctx, req.(*ResetPwdMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -209,5 +210,5 @@ var UserAuth_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "user.proto",
+	Metadata: "proto/user.proto",
 }

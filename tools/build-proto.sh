@@ -14,4 +14,4 @@ cd ${SCRIPTPATH}/..
 
 rm -rf ./proto/go/*
 # lets compile the proto files.
-protoc -I proto/ proto/user.proto --go-grpc_out=./proto/go
+protoc --go_out=./proto/go --go-grpc_out=./proto/go proto/user.proto

@@ -9,6 +9,7 @@ option go_package = "./userProto";
 package userProto;
 
 import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
 
 message UserRequest {
     // contain only alphabets, numbers or underscore,
@@ -24,20 +25,15 @@ message UserToken {
     // a valid token that is being used for user authentication.
     string token = 1;
     google.protobuf.Duration validity = 2;
+    bool is_admin = 3;
 }
 
-message UserResponse {
-    enum Status {
-        Invalid = 0;
-        Success = 1;
-    }
-    Status status_code = 1;
-}
 
 message UserDetails {
     // email address that used for user account.
     // email can be used for reset the password for the user.
     string email = 1;
+    bool is_admin = 2;
 }
 
 message UserWithDetails {
@@ -45,10 +41,16 @@ message UserWithDetails {
     UserDetails details = 2;
 }
 
+message ResetPwdMessage {
+    string username = 1;
+    string email = 2;
+    string newPwd = 3;
+}
+
 service UserAuth {
-    rpc NewUser(UserWithDetails) returns (UserResponse);
-    rpc DelUser(UserRequest) returns (UserResponse);
+    rpc NewUser(UserWithDetails) returns (google.protobuf.Empty);
+    rpc DelUser(UserRequest) returns (google.protobuf.Empty);
     rpc GetUserToken(UserRequest) returns (UserToken);
-    rpc UpdateUserPassword(UserDetails) returns (UserResponse);
+    rpc UpdateUserPassword(ResetPwdMessage) returns (google.protobuf.Empty);
 }
 
