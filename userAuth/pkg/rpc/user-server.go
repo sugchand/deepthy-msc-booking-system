@@ -3,15 +3,20 @@ package rpc
 import (
 	proto "bookingSystem/proto/go/userProto"
 	"bookingSystem/userAuth/pkg/db"
+	"bookingSystem/userAuth/pkg/env"
 	"context"
+	"fmt"
+	"net"
 
-	"github.com/golang/protobuf/ptypes/empty"
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type RPCServer struct {
 	userTablePtr *db.UserTableHandle
+	proto.UnimplementedUserAuthServer
 }
 
 func (rs *RPCServer) NewUser(ctx context.Context, userData *proto.UserWithDetails) (*emptypb.Empty, error) {
@@ -43,7 +48,7 @@ func (rs *RPCServer) GetUserToken(ctx context.Context, userReq *proto.UserReques
 	}, err
 }
 
-func (rs *RPCServer) UpdateUserPassword(ctx context.Context, details *proto.ResetPwdMessage) (*empty.Empty, error) {
+func (rs *RPCServer) UpdateUserPassword(ctx context.Context, details *proto.ResetPwdMessage) (*emptypb.Empty, error) {
 	uname := details.GetUsername()
 	newPwd := details.GetNewPwd()
 	email := details.GetEmail()
@@ -51,8 +56,24 @@ func (rs *RPCServer) UpdateUserPassword(ctx context.Context, details *proto.Rese
 	return &emptypb.Empty{}, err
 }
 
-func NewRPCServer(userTablePtr *db.UserTableHandle) *RPCServer {
-	return &RPCServer{
+func NewRPCServer(userTablePtr *db.UserTableHandle, env *env.UserEnvValues) (*RPCServer, error) {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", env.GRPCListenPort()))
+	if err != nil {
+		log.WithFields(log.Fields{
+			"port": env.GRPCListenPort(),
+		}).WithError(err).Error("failed to create rpc server, failed to listen on port!")
+		return nil, err
+	}
+	serverInstance := grpc.NewServer()
+	userAuthServer := &RPCServer{
 		userTablePtr: userTablePtr,
 	}
+	proto.RegisterUserAuthServer(serverInstance, userAuthServer)
+	if err := serverInstance.Serve(lis); err != nil {
+		log.WithFields(log.Fields{
+			"port": env.GRPCListenPort(),
+		}).WithError(err).Error("failed to create rpc server, as grpc server creation is failed!")
+		return nil, err
+	}
+	return userAuthServer, nil
 }

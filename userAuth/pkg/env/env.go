@@ -11,6 +11,8 @@ import (
 const (
 	EnvDBRemoteName            = "DB_REMOTE"
 	EnvDBName                  = "DB_NAME"
+	EnvDBUname                 = "DB_UNAME"
+	EnvDBPwd                   = "DB_PWD"
 	EnvGRPCListenPortName      = "USERAUTH_GRPC_LISTEN_PORT"
 	EnvUserAccessTokenValidity = "USERAUTH_TOKEN_VALIDITY_SECONDS"
 )
@@ -18,6 +20,8 @@ const (
 type UserEnvValues struct {
 	dbRemote          string
 	dbName            string
+	dbUname           string
+	dbPwd             string
 	grpcListenPort    uint32
 	userTokenValidity time.Duration
 }
@@ -31,6 +35,10 @@ func (ue *UserEnvValues) DBName() string {
 	return ue.dbName
 }
 
+func (ue *UserEnvValues) DBUNameAndPwd() (string, string) {
+	return ue.dbUname, ue.dbPwd
+}
+
 func (ue *UserEnvValues) GRPCListenPort() uint32 {
 	return ue.grpcListenPort
 }
@@ -42,6 +50,8 @@ func (ue *UserEnvValues) TokenValidity() time.Duration {
 func (ue *UserEnvValues) readEnvValues() error {
 	ue.dbName = os.Getenv(EnvDBName)
 	ue.dbRemote = os.Getenv(EnvDBRemoteName)
+	ue.dbUname = os.Getenv(EnvDBUname)
+	ue.dbPwd = os.Getenv(EnvDBPwd)
 
 	validity := os.Getenv(EnvUserAccessTokenValidity)
 	validitySeconds, err := strconv.ParseUint(validity, 10, 0)

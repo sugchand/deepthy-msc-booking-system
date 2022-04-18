@@ -22,15 +22,11 @@ func run(ctx context.Context, envValues *env.UserEnvValues, args []string) error
 	}
 
 	// finally initialize the rpc server
-	rpc.NewRPCServer(userTableHandle)
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		default:
-			// do a piece of work
-		}
+	_, err = rpc.NewRPCServer(userTableHandle, envValues)
+	if err != nil {
+		os.Exit(exitCodeErr)
 	}
+	return nil
 }
 
 func main() {

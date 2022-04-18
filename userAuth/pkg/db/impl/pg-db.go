@@ -23,7 +23,8 @@ type PostgresDB struct {
 func (pd *PostgresDB) DB(ctx context.Context) *bun.DB {
 	pd.lock.Lock()
 	defer pd.lock.Unlock()
-	dsn := postgresDSN(pd.uEnv.DBRemote(), pd.uEnv.DBName())
+	uname, pwd := pd.uEnv.DBUNameAndPwd()
+	dsn := postgresDSN(pd.uEnv.DBRemote(), pd.uEnv.DBName(), uname, pwd)
 	if pd.dbhandle == nil {
 		sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 		pd.dbhandle = bun.NewDB(sqldb, pgdialect.New())
@@ -58,9 +59,9 @@ func NewPostgresDB(uEnv *env.UserEnvValues) *PostgresDB {
 	}
 }
 
-func postgresDSN(remote, dbName string) string {
+func postgresDSN(remote, dbName, uname, pwd string) string {
 	// dsn := "postgres://postgres:@localhost:5432/test?sslmode=disable"
 	// dsn := "unix://user:pass@dbname/var/run/postgresql/.s.PGSQL.5432"
 	// TODO :: enable ssl to secure db access.
-	return "postgres://postgres:@" + remote + "/" + dbName + "?sslmode=disable"
+	return "postgres://" + uname + ":" + pwd + "@" + remote + "/" + dbName + "?sslmode=disable"
 }
