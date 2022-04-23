@@ -1,0 +1,52 @@
+// *******************************************************
+// * Created by Deepthy Vazhelil
+// *
+// * Copyright (c) 2022 Opensource Licence
+// *******************************************************
+
+syntax = "proto3";
+option go_package = "bookingSystem/proto/roomInventory";
+package bookingSystem.proto.roomInventory;
+
+import "proto/userProto/user.proto";
+import "google/protobuf/empty.proto";
+
+message RoomType {
+    enum model {
+        unknown = 0;
+        single = 1;
+        single_bed_double = 2;
+        twin_bed_double = 3;
+        deluxe_double = 4;
+        deluxe_king = 5;
+        family_room = 6;
+        klah = 7;
+
+    }
+    model room_model = 1;
+    string description = 2;
+}
+
+message Room {
+    // the number of room. it must be unique across the system
+    uint64 number = 1;
+    // description of room, such as floor, buidling and etc
+    string description = 2;
+    RoomType kind = 3;
+    // TODO :: extend the room with additional information if required.
+}
+
+message RoomWithUserToken {
+    userProto.UserToken token = 1;
+    Room room = 2;
+}
+
+message RoomNumberWithUserToken {
+    userProto.UserToken token = 1;
+    uint64 room_number = 2;
+}
+service roomInventory {
+    rpc NewRoom(RoomWithUserToken) returns (google.protobuf.Empty);
+    rpc removeRoom(RoomNumberWithUserToken) returns (google.protobuf.Empty);
+
+}

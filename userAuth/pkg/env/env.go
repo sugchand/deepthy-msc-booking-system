@@ -1,6 +1,7 @@
 package env
 
 import (
+	"bookingSystem/common"
 	"os"
 	"strconv"
 	"time"
@@ -9,7 +10,7 @@ import (
 )
 
 const (
-	EnvDBRemoteName            = "DB_REMOTE"
+	EnvDBHost                  = "DB_HOST"
 	EnvDBName                  = "DB_NAME"
 	EnvDBUname                 = "DB_UNAME"
 	EnvDBPwd                   = "DB_PWD"
@@ -18,7 +19,7 @@ const (
 )
 
 type UserEnvValues struct {
-	dbRemote          string
+	dbHost            string
 	dbName            string
 	dbUname           string
 	dbPwd             string
@@ -28,7 +29,8 @@ type UserEnvValues struct {
 
 // Get the DB path.
 func (ue *UserEnvValues) DBRemote() string {
-	return ue.dbRemote
+
+	return ue.dbHost + ":" + strconv.Itoa(common.DBPORT)
 }
 
 func (ue *UserEnvValues) DBName() string {
@@ -49,7 +51,7 @@ func (ue *UserEnvValues) TokenValidity() time.Duration {
 
 func (ue *UserEnvValues) readEnvValues() error {
 	ue.dbName = os.Getenv(EnvDBName)
-	ue.dbRemote = os.Getenv(EnvDBRemoteName)
+	ue.dbHost = os.Getenv(EnvDBHost)
 	ue.dbUname = os.Getenv(EnvDBUname)
 	ue.dbPwd = os.Getenv(EnvDBPwd)
 

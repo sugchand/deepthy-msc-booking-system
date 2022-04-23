@@ -5,8 +5,8 @@
 // *******************************************************
 
 syntax = "proto3";
-option go_package = "./userProto";
-package userProto;
+option go_package ="bookingSystem/proto/userProto";
+package bookingSystem.proto.userProto;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";

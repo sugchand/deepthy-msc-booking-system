@@ -1,7 +1,7 @@
 package rpc
 
 import (
-	proto "bookingSystem/proto/go/userProto"
+	proto "bookingSystem/proto/userProto"
 	"bookingSystem/userAuth/pkg/db"
 	"bookingSystem/userAuth/pkg/env"
 	"context"

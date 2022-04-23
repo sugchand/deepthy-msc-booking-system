@@ -2,6 +2,7 @@ GOCMD=go
 GOTEST=$(GOCMD) test
 GOVET=$(GOCMD) vet
 USERAUTH_BINARY_NAME=user-auth
+ROOMINVENTORY_BINARY_NAME=room-inventory
 VERSION?=0.0.0
 DOCKER_REGISTRY?= #if set it should finished by /
 EXPORT_RESULT?=false # for CI please set EXPORT_RESULT to true
@@ -20,6 +21,7 @@ all: help
 build: ## Build your project and put the output binary in bin/
 	mkdir -p bin
 	GO111MODULE=on $(GOCMD) build -o bin/$(USERAUTH_BINARY_NAME) ./cmd/userAuth
+	GO111MODULE=on $(GOCMD) build -o bin/$(ROOMINVENTORY_BINARY_NAME) ./cmd/roomInventory
 
 clean: ## Remove build related file
 	rm -fr ./bin

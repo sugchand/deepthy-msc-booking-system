@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.20.0
-// source: proto/user.proto
+// source: proto/userProto/user.proto
 
 package userProto
 
@@ -39,7 +39,7 @@ func NewUserAuthClient(cc grpc.ClientConnInterface) UserAuthClient {
 
 func (c *userAuthClient) NewUser(ctx context.Context, in *UserWithDetails, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/userProto.UserAuth/NewUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.userProto.UserAuth/NewUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *userAuthClient) NewUser(ctx context.Context, in *UserWithDetails, opts 
 
 func (c *userAuthClient) DelUser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/userProto.UserAuth/DelUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.userProto.UserAuth/DelUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *userAuthClient) DelUser(ctx context.Context, in *UserRequest, opts ...g
 
 func (c *userAuthClient) GetUserToken(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserToken, error) {
 	out := new(UserToken)
-	err := c.cc.Invoke(ctx, "/userProto.UserAuth/GetUserToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.userProto.UserAuth/GetUserToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *userAuthClient) GetUserToken(ctx context.Context, in *UserRequest, opts
 
 func (c *userAuthClient) UpdateUserPassword(ctx context.Context, in *ResetPwdMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/userProto.UserAuth/UpdateUserPassword", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.userProto.UserAuth/UpdateUserPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func _UserAuth_NewUser_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/userProto.UserAuth/NewUser",
+		FullMethod: "/bookingSystem.proto.userProto.UserAuth/NewUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserAuthServer).NewUser(ctx, req.(*UserWithDetails))
@@ -141,7 +141,7 @@ func _UserAuth_DelUser_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/userProto.UserAuth/DelUser",
+		FullMethod: "/bookingSystem.proto.userProto.UserAuth/DelUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserAuthServer).DelUser(ctx, req.(*UserRequest))
@@ -159,7 +159,7 @@ func _UserAuth_GetUserToken_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/userProto.UserAuth/GetUserToken",
+		FullMethod: "/bookingSystem.proto.userProto.UserAuth/GetUserToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserAuthServer).GetUserToken(ctx, req.(*UserRequest))
@@ -177,7 +177,7 @@ func _UserAuth_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/userProto.UserAuth/UpdateUserPassword",
+		FullMethod: "/bookingSystem.proto.userProto.UserAuth/UpdateUserPassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserAuthServer).UpdateUserPassword(ctx, req.(*ResetPwdMessage))
@@ -189,7 +189,7 @@ func _UserAuth_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserAuth_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "userProto.UserAuth",
+	ServiceName: "bookingSystem.proto.userProto.UserAuth",
 	HandlerType: (*UserAuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -210,5 +210,5 @@ var UserAuth_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/user.proto",
+	Metadata: "proto/userProto/user.proto",
 }

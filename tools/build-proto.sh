@@ -12,6 +12,5 @@ fi
 
 cd ${SCRIPTPATH}/..
 
-rm -rf ./proto/go/*
 # lets compile the proto files.
-protoc --go_out=./proto/go --go-grpc_out=./proto/go proto/user.proto
+protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/userProto/user.proto proto/roomInventory/rooms.proto
