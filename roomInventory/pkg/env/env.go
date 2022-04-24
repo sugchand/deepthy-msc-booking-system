@@ -9,19 +9,23 @@ import (
 )
 
 const (
-	EnvDBHost             = "DB_HOST"
-	EnvDBName             = "DB_NAME"
-	EnvDBUname            = "DB_UNAME"
-	EnvDBPwd              = "DB_PWD"
-	EnvGRPCListenPortName = "ROOMINVENTORY_GRPC_LISTEN_PORT"
+	EnvDBHost                     = "DB_HOST"
+	EnvDBName                     = "DB_NAME"
+	EnvDBUname                    = "DB_UNAME"
+	EnvDBPwd                      = "DB_PWD"
+	EnvGRPCListenPortName         = "ROOMINVENTORY_GRPC_LISTEN_PORT"
+	EnvGRPCUserAuthListenPortName = "USERAUTH_GRPC_LISTEN_PORT"
+	EnvGRPCUserAuthListenHost     = "USERAUTH_GRPC_LISTEN_HOST"
 )
 
 type RoomEnvValues struct {
-	dbHost         string
-	dbName         string
-	dbUname        string
-	dbPwd          string
-	grpcListenPort uint32
+	dbHost             string
+	dbName             string
+	dbUname            string
+	dbPwd              string
+	grpcListenPort     uint32
+	userAuthListenPort uint32
+	userAuthListenHost string
 }
 
 // Get the DB path.
@@ -42,6 +46,10 @@ func (re *RoomEnvValues) GRPCListenPort() uint32 {
 	return re.grpcListenPort
 }
 
+func (re *RoomEnvValues) UserAuthHostAndPort() (string, uint32) {
+	return re.userAuthListenHost, re.userAuthListenPort
+}
+
 func (re *RoomEnvValues) readEnvValues() error {
 	re.dbName = os.Getenv(EnvDBName)
 	re.dbHost = os.Getenv(EnvDBHost)
@@ -57,6 +65,17 @@ func (re *RoomEnvValues) readEnvValues() error {
 		return err
 	}
 	re.grpcListenPort = uint32(intPort)
+
+	port = os.Getenv(EnvGRPCUserAuthListenPortName)
+	intPort, err = strconv.ParseUint(port, 10, 0)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"port": port,
+		}).WithError(err).Error("failed to read environment variable configuration for userauth port!")
+		return err
+	}
+	re.userAuthListenPort = uint32(intPort)
+	re.userAuthListenHost = os.Getenv(EnvGRPCUserAuthListenHost)
 	return nil
 }
 

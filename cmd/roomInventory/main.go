@@ -22,7 +22,7 @@ func run(ctx context.Context, envValues *env.RoomEnvValues, args []string) error
 	}
 
 	// finally initialize the rpc server
-	_, err = rpc.NewRPCServer(roomTableHandle, envValues)
+	_, err = rpc.NewRPCServer(ctx, roomTableHandle, envValues)
 	if err != nil {
 		os.Exit(exitCodeErr)
 	}

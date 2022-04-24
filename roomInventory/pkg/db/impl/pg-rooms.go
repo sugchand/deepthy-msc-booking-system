@@ -10,6 +10,7 @@ import (
 
 const roomsTableName = "rooms"
 const roomsTypeTableName = "rooms_type"
+const roomsPriceTableName = "rooms_price"
 
 type RoomTable struct {
 	bun.BaseModel `bun:"table:rooms"` // table name rooms
@@ -21,7 +22,12 @@ type RoomTypeTable struct {
 	bun.BaseModel `bun:"table:rooms_type"` // table name rooms_type
 	RoomType      string                   `bun:"model,unique:model_value"`
 	RoomNumber    uint64                   `bun:"room_no,unique:model_value"` // FK from rooms table.
-	Description   string                   `bun:"description"`
+}
+
+type RoomPriceTable struct {
+	bun.BaseModel `bun:"table:rooms_price"` // table name rooms_price
+	RoomPrice     float64                   `bun:"price,unique:price_value"`
+	RoomNumber    uint64                    `bun:"room_no,unique:price_value"` // FK from rooms table.
 }
 
 func CreateInventoryTables(ctx context.Context, dbHandle *PostgresDB) error {
@@ -46,6 +52,16 @@ func CreateInventoryTables(ctx context.Context, dbHandle *PostgresDB) error {
 			"db-table": roomsTypeTableName,
 		}).WithError(err).Error("failed to create rooms-type table.")
 	}
+
+	_, err = db.NewCreateTable().Model((*RoomPriceTable)(nil)).
+		IfNotExists().
+		WithForeignKeys().ForeignKey(`("room_no") REFERENCES "rooms" ("room_no") ON DELETE CASCADE`).
+		Exec(ctx)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"db-table": roomsPriceTableName,
+		}).WithError(err).Error("failed to create rooms-price table.")
+	}
 	return err
 }
 
@@ -68,15 +84,14 @@ func DropInventoryTables(ctx context.Context, dbHandle *PostgresDB) error {
 
 }
 
-func NewRoom(ctx context.Context, dbHandle *PostgresDB, roomNum uint64, roomDesc, roomType, roomTypeDesc string) error {
+func NewRoom(ctx context.Context, dbHandle *PostgresDB, roomNum uint64, roomDesc, roomType string) error {
 	room := &RoomTable{
 		RoomNumber:  roomNum,
 		Description: roomDesc,
 	}
 	roomTypeRow := &RoomTypeTable{
-		RoomType:    roomType,
-		RoomNumber:  roomNum,
-		Description: roomTypeDesc,
+		RoomType:   roomType,
+		RoomNumber: roomNum,
 	}
 
 	db := dbHandle.DB(ctx)

@@ -39,10 +39,21 @@ func (rs *RPCServer) DelUser(ctx context.Context, userReq *proto.UserRequest) (*
 func (rs *RPCServer) GetUserToken(ctx context.Context, userReq *proto.UserRequest) (*proto.UserToken, error) {
 	uname := userReq.GetUsername()
 	pwd := userReq.GetPassword()
-	token, validity, isAdmin, err := rs.userTablePtr.GetUserToken(ctx, uname, pwd)
+	uname, token, validity, isAdmin, err := rs.userTablePtr.GetUserToken(ctx, uname, pwd)
 
 	return &proto.UserToken{
+		Username: uname,
 		Token:    token,
+		Validity: durationpb.New(validity),
+		IsAdmin:  isAdmin,
+	}, err
+}
+
+func (rs *RPCServer) IsTokenValid(ctx context.Context, tok *proto.UserToken) (*proto.UserToken, error) {
+	uname, validity, isAdmin, err := rs.userTablePtr.TokenValid(ctx, tok.GetToken(), tok.GetUsername())
+	return &proto.UserToken{
+		Username: uname,
+		Token:    tok.GetToken(), // nothing is changed.
 		Validity: durationpb.New(validity),
 		IsAdmin:  isAdmin,
 	}, err

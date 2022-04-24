@@ -22,10 +22,12 @@ message UserRequest {
 }
 
 message UserToken {
+    string username = 1; //username for the specific token.
     // a valid token that is being used for user authentication.
-    string token = 1;
-    google.protobuf.Duration validity = 2;
-    bool is_admin = 3;
+    // a token is valid for specific validity duration.
+    string token = 2;
+    google.protobuf.Duration validity = 3;
+    bool is_admin = 4;
 }
 
 
@@ -41,16 +43,28 @@ message UserWithDetails {
     UserDetails details = 2;
 }
 
-message ResetPwdMessage {
+message ResetPwdRequest {
     string username = 1;
     string email = 2;
-    string newPwd = 3;
+}
+
+message ResetToken {
+    string token = 1;
+}
+
+message ResetPwdMessage {
+    string token = 1;
+    string new_pwd = 2;
 }
 
 service UserAuth {
     rpc NewUser(UserWithDetails) returns (google.protobuf.Empty);
     rpc DelUser(UserRequest) returns (google.protobuf.Empty);
     rpc GetUserToken(UserRequest) returns (UserToken);
-    rpc UpdateUserPassword(ResetPwdMessage) returns (google.protobuf.Empty);
+    // function to check if the current token is valid , the api will respond 
+    // the token with the session time.
+    rpc IsTokenValid(UserToken) returns (UserToken);
+    rpc RequestUserPasswordUpdate(ResetPwdRequest) returns (ResetToken);
+    rpc UserPasswordUpdate(ResetPwdMessage) returns (google.protobuf.Empty);
 }
 

@@ -12,9 +12,9 @@ type RoomsTableHandle struct {
 	envValues  *env.RoomEnvValues
 }
 
-func (rth *RoomsTableHandle) NewRoom(ctx context.Context, roomNum uint64, roomDesc, roomType, roomTypeDesc string) error {
+func (rth *RoomsTableHandle) NewRoom(ctx context.Context, roomNum uint64, roomDesc, roomType string) error {
 
-	return impl.NewRoom(ctx, rth.pgDBHandle, roomNum, roomDesc, roomType, roomTypeDesc)
+	return impl.NewRoom(ctx, rth.pgDBHandle, roomNum, roomDesc, roomType)
 }
 
 func (rth *RoomsTableHandle) DeleteRoom(ctx context.Context, roomNum uint64) error {

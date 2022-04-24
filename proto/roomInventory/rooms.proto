@@ -10,6 +10,7 @@ package bookingSystem.proto.roomInventory;
 
 import "proto/userProto/user.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 message RoomType {
     enum model {
@@ -20,11 +21,9 @@ message RoomType {
         deluxe_double = 4;
         deluxe_king = 5;
         family_room = 6;
-        klah = 7;
 
     }
     model room_model = 1;
-    string description = 2;
 }
 
 message Room {
@@ -33,6 +32,7 @@ message Room {
     // description of room, such as floor, buidling and etc
     string description = 2;
     RoomType kind = 3;
+    double price = 4;
     // TODO :: extend the room with additional information if required.
 }
 
@@ -45,8 +45,41 @@ message RoomNumberWithUserToken {
     userProto.UserToken token = 1;
     uint64 room_number = 2;
 }
+
+message RoomTypeWithUserTokenInTimePeriod {
+    userProto.UserToken token = 1;
+    RoomType model = 2;
+    google.protobuf.Timestamp date_in = 3;
+    google.protobuf.Timestamp date_out = 4;
+}
+
+message RoomList {
+    repeated uint64 room_number = 1;
+}
+
+message RoomNumberWithUserTokenInTimePeriod {
+    // Used to book the room for a given time period.
+    userProto.UserToken token = 1;
+    uint64 room_number = 2;
+    double price = 3;
+    google.protobuf.Timestamp date_in = 4;
+    google.protobuf.Timestamp date_out = 5;
+}
+
+message RoomCheckInCheckout {
+    userProto.UserToken token = 1;
+    string uname = 2;
+    uint64 room_number = 3;
+    google.protobuf.Timestamp date_in = 4;
+    google.protobuf.Timestamp date_out = 5;
+}
+
 service roomInventory {
     rpc NewRoom(RoomWithUserToken) returns (google.protobuf.Empty);
-    rpc removeRoom(RoomNumberWithUserToken) returns (google.protobuf.Empty);
-
+    rpc RemoveRoom(RoomNumberWithUserToken) returns (google.protobuf.Empty);
+    rpc RoomsOfType(RoomTypeWithUserTokenInTimePeriod) returns (RoomList);
+    rpc ReserveRoom(RoomNumberWithUserTokenInTimePeriod) returns (google.protobuf.Empty);
+    rpc CancelRoomReserve(RoomNumberWithUserTokenInTimePeriod) returns (google.protobuf.Empty);
+    rpc RoomCheckIn(RoomCheckInCheckout) returns (google.protobuf.Empty);
+    rpc RoomCheckOut(RoomCheckInCheckout) returns (google.protobuf.Empty);
 }

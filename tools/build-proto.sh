@@ -12,5 +12,6 @@ fi
 
 cd ${SCRIPTPATH}/..
 
+find proto/ -name "*.pb.go" -type f -delete
 # lets compile the proto files.
-protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/userProto/user.proto proto/roomInventory/rooms.proto
+protoc -I. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/userProto/user.proto proto/roomInventory/rooms.proto proto/payment/payment.proto

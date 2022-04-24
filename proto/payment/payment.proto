@@ -1,0 +1,21 @@
+// *******************************************************
+// * Created by Deepthy Vazhelil
+// *
+// * Copyright (c) 2022 Opensource Licence
+// *******************************************************
+
+syntax = "proto3";
+option go_package = "bookingSystem/proto/payment";
+package bookingSystem.proto.payment;
+
+import "proto/userProto/user.proto";
+import "google/protobuf/empty.proto";
+
+message paymentRequest {
+    userProto.UserToken token = 1;
+    double charge = 2;
+}
+
+service Payment {
+    rpc processPayment(paymentRequest) returns (google.protobuf.Empty);
+}

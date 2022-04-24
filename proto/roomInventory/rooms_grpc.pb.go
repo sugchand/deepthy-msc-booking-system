@@ -25,6 +25,11 @@ const _ = grpc.SupportPackageIsVersion7
 type RoomInventoryClient interface {
 	NewRoom(ctx context.Context, in *RoomWithUserToken, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RemoveRoom(ctx context.Context, in *RoomNumberWithUserToken, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RoomsOfType(ctx context.Context, in *RoomTypeWithUserTokenInTimePeriod, opts ...grpc.CallOption) (*RoomList, error)
+	ReserveRoom(ctx context.Context, in *RoomNumberWithUserTokenInTimePeriod, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CancelRoomReserve(ctx context.Context, in *RoomNumberWithUserTokenInTimePeriod, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RoomCheckIn(ctx context.Context, in *RoomCheckInCheckout, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RoomCheckOut(ctx context.Context, in *RoomCheckInCheckout, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type roomInventoryClient struct {
@@ -46,7 +51,52 @@ func (c *roomInventoryClient) NewRoom(ctx context.Context, in *RoomWithUserToken
 
 func (c *roomInventoryClient) RemoveRoom(ctx context.Context, in *RoomNumberWithUserToken, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/bookingSystem.proto.roomInventory.roomInventory/removeRoom", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.roomInventory.roomInventory/RemoveRoom", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roomInventoryClient) RoomsOfType(ctx context.Context, in *RoomTypeWithUserTokenInTimePeriod, opts ...grpc.CallOption) (*RoomList, error) {
+	out := new(RoomList)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.roomInventory.roomInventory/RoomsOfType", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roomInventoryClient) ReserveRoom(ctx context.Context, in *RoomNumberWithUserTokenInTimePeriod, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.roomInventory.roomInventory/ReserveRoom", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roomInventoryClient) CancelRoomReserve(ctx context.Context, in *RoomNumberWithUserTokenInTimePeriod, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.roomInventory.roomInventory/CancelRoomReserve", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roomInventoryClient) RoomCheckIn(ctx context.Context, in *RoomCheckInCheckout, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.roomInventory.roomInventory/RoomCheckIn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roomInventoryClient) RoomCheckOut(ctx context.Context, in *RoomCheckInCheckout, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/bookingSystem.proto.roomInventory.roomInventory/RoomCheckOut", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -59,6 +109,11 @@ func (c *roomInventoryClient) RemoveRoom(ctx context.Context, in *RoomNumberWith
 type RoomInventoryServer interface {
 	NewRoom(context.Context, *RoomWithUserToken) (*emptypb.Empty, error)
 	RemoveRoom(context.Context, *RoomNumberWithUserToken) (*emptypb.Empty, error)
+	RoomsOfType(context.Context, *RoomTypeWithUserTokenInTimePeriod) (*RoomList, error)
+	ReserveRoom(context.Context, *RoomNumberWithUserTokenInTimePeriod) (*emptypb.Empty, error)
+	CancelRoomReserve(context.Context, *RoomNumberWithUserTokenInTimePeriod) (*emptypb.Empty, error)
+	RoomCheckIn(context.Context, *RoomCheckInCheckout) (*emptypb.Empty, error)
+	RoomCheckOut(context.Context, *RoomCheckInCheckout) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRoomInventoryServer()
 }
 
@@ -71,6 +126,21 @@ func (UnimplementedRoomInventoryServer) NewRoom(context.Context, *RoomWithUserTo
 }
 func (UnimplementedRoomInventoryServer) RemoveRoom(context.Context, *RoomNumberWithUserToken) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveRoom not implemented")
+}
+func (UnimplementedRoomInventoryServer) RoomsOfType(context.Context, *RoomTypeWithUserTokenInTimePeriod) (*RoomList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RoomsOfType not implemented")
+}
+func (UnimplementedRoomInventoryServer) ReserveRoom(context.Context, *RoomNumberWithUserTokenInTimePeriod) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReserveRoom not implemented")
+}
+func (UnimplementedRoomInventoryServer) CancelRoomReserve(context.Context, *RoomNumberWithUserTokenInTimePeriod) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelRoomReserve not implemented")
+}
+func (UnimplementedRoomInventoryServer) RoomCheckIn(context.Context, *RoomCheckInCheckout) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RoomCheckIn not implemented")
+}
+func (UnimplementedRoomInventoryServer) RoomCheckOut(context.Context, *RoomCheckInCheckout) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RoomCheckOut not implemented")
 }
 func (UnimplementedRoomInventoryServer) mustEmbedUnimplementedRoomInventoryServer() {}
 
@@ -113,10 +183,100 @@ func _RoomInventory_RemoveRoom_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bookingSystem.proto.roomInventory.roomInventory/removeRoom",
+		FullMethod: "/bookingSystem.proto.roomInventory.roomInventory/RemoveRoom",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoomInventoryServer).RemoveRoom(ctx, req.(*RoomNumberWithUserToken))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoomInventory_RoomsOfType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoomTypeWithUserTokenInTimePeriod)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoomInventoryServer).RoomsOfType(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingSystem.proto.roomInventory.roomInventory/RoomsOfType",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoomInventoryServer).RoomsOfType(ctx, req.(*RoomTypeWithUserTokenInTimePeriod))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoomInventory_ReserveRoom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoomNumberWithUserTokenInTimePeriod)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoomInventoryServer).ReserveRoom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingSystem.proto.roomInventory.roomInventory/ReserveRoom",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoomInventoryServer).ReserveRoom(ctx, req.(*RoomNumberWithUserTokenInTimePeriod))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoomInventory_CancelRoomReserve_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoomNumberWithUserTokenInTimePeriod)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoomInventoryServer).CancelRoomReserve(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingSystem.proto.roomInventory.roomInventory/CancelRoomReserve",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoomInventoryServer).CancelRoomReserve(ctx, req.(*RoomNumberWithUserTokenInTimePeriod))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoomInventory_RoomCheckIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoomCheckInCheckout)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoomInventoryServer).RoomCheckIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingSystem.proto.roomInventory.roomInventory/RoomCheckIn",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoomInventoryServer).RoomCheckIn(ctx, req.(*RoomCheckInCheckout))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoomInventory_RoomCheckOut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RoomCheckInCheckout)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoomInventoryServer).RoomCheckOut(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bookingSystem.proto.roomInventory.roomInventory/RoomCheckOut",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoomInventoryServer).RoomCheckOut(ctx, req.(*RoomCheckInCheckout))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -133,8 +293,28 @@ var RoomInventory_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RoomInventory_NewRoom_Handler,
 		},
 		{
-			MethodName: "removeRoom",
+			MethodName: "RemoveRoom",
 			Handler:    _RoomInventory_RemoveRoom_Handler,
+		},
+		{
+			MethodName: "RoomsOfType",
+			Handler:    _RoomInventory_RoomsOfType_Handler,
+		},
+		{
+			MethodName: "ReserveRoom",
+			Handler:    _RoomInventory_ReserveRoom_Handler,
+		},
+		{
+			MethodName: "CancelRoomReserve",
+			Handler:    _RoomInventory_CancelRoomReserve_Handler,
+		},
+		{
+			MethodName: "RoomCheckIn",
+			Handler:    _RoomInventory_RoomCheckIn_Handler,
+		},
+		{
+			MethodName: "RoomCheckOut",
+			Handler:    _RoomInventory_RoomCheckOut_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
